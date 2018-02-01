@@ -18,9 +18,9 @@ close all;
 clc;
 
 % UNITS
-meters      = 1;
-centimeters = 1e-2 * meters;
-millimeters = 1e-3 * meters;
+millimeters = 1;
+meters      = 1e3*millimeters;
+centimeters = 1e2*millimeters;
 inches      = 2.54 * centimeters;
 feet        = 12 * inches;
 seconds     = 1;
@@ -38,24 +38,31 @@ c0 = 299792458 * meters/seconds;
 % OPEN FIGURE WINDOW
 figure('Color','w');
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% DASHBOARD
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % TRANSMISSION LINE PARAMETERS
-NC = 1; % Number of conductors
-ersup = 1.0; % Permittivity of Superstrate
-ersub = 9.0; % Permittivity of Substrate
-h = 2; % Height of substrate
-w = 4; % Width of TL
+ersup = [1 0 0;     % Permitivitty tensor of Superstrate
+         0 1 0;
+         0 0 1];
+ersub = [9 0 0;
+         0 9 0;     % Permittivity tensor of Substrate
+         0 0 9];
+h = 2*millimeters; % Height of substrate
+w = 4*millimeters; % Width of TL
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% MISC. PARAMETERS
+phi = 0;        % Angle of tensor rotation
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% DEFINE GRID
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % GRID PARAMETERS
-Sx = w;
-Sy = h;
+BUFF = 3*w;
+Sx = BUFF + w + BUFF;
+Sy = h + BUFF;
 Nx = 256;
 Ny = 256;
 
@@ -63,17 +70,17 @@ Ny = 256;
 dx = Sx/Nx;
 dy = Sy/Ny;
 
-% COMPUTE 2x GRID
-Nx2 = 2*Nx;
-dx2 = dx/2;
-Ny2 = 2*Ny;
-dy2 = dy/2;
-
 % SNAP GRID TO CRITICAL DIMENSIONS
 nx = ceil(w/dx);
 dx = w/nx;
 ny = ceil(h/dy);
 dy = h/ny;
+
+% COMPUTE 2x GRID
+Nx2 = 2*Nx;
+dx2 = dx/2;
+Ny2 = 2*Ny;
+dy2 = dy/2;
 
 % GRID AXES
 xa = [0:Nx-1]*dx; xa = xa - mean(xa);
@@ -82,3 +89,40 @@ ya = [0:Ny-1]*dy; ya = ya - mean(ya);
 % 2x GRID AXES
 xa2 = [0:Nx2-1]*dx2; xa2 = xa2 - mean(xa2);
 ya2 = [0:Ny2-1]*dy2; ya2 = ya2 - mean(ya2);
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% BUILD DEVICE ON GRID
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% INITIALIZE SIGNALS
+SIG.V       = [0 1]; % [GND,SIG1,SIG2,...,SIGn] Forced Potentials
+SIG.GND     = zeros(Nx,Ny);
+SIG.SIG1    = SIG.GND;
+
+% FORCE CONDUCTORS
+SIG.GND(:,1)     = 1;
+SIG.GND(:,Ny)    = 1;
+SIG.GND(1,:)     = 1;
+SIG.GND(Nx,:)    = 1;
+nx1 = (BUFF/dx);
+nx2 = nx1 + w/dx;
+ny1 = Ny  - 2 - (h/dy);
+ny2 = ny1 + 1;
+SIG.SIG1(nx1:nx2,ny1:ny2) = 1;
+
+% BUILD PERMITTIVITIES IN 2x GRID
+ER2xx = ersup(1,1)*ones(Nx2,Ny2);   % Fill with superstrate
+ER2xy = ersup(1,2)*ones(Nx2,Ny2);
+ER2yx = ersup(2,1)*ones(Nx2,Ny2);
+ER2yy = ersup(2,2)*ones(Nx2,Ny2);
+ER2xx(:,Ny2-h/dy2-1:Ny2) = ersub(1,1);
+ER2xy(:,Ny2-h/dy2-1:Ny2) = ersub(1,2);
+ER2yx(:,Ny2-h/dy2-1:Ny2) = ersub(2,1);
+ER2yy(:,Ny2-h/dy2-1:Ny2) = ersub(2,2);
+
+% PARSE TO 1x GRID
+DEV.ERxx = ER2xx(2:2:Nx2,1:2:Ny2);
+DEV.ERxy = ER2xy(1:2:Nx2,2:2:Ny2);
+DEV.ERyx = ER2yx(2:2:Nx2,1:2:Ny2);
+DEV.ERyy = ER2yy(1:2:Nx2,2:2:Ny2); 
+
