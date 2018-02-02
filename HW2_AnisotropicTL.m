@@ -28,6 +28,7 @@ hertz       = 1/seconds;
 kilohertz   = 1e3 * hertz;
 megahertz   = 1e6 * hertz;
 gigahertz   = 1e9 * hertz;
+degrees     = pi/180;
 
 % CONSTANTS
 e0 = 8.85418782e-12;
@@ -43,28 +44,35 @@ figure('Color','w');
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % TRANSMISSION LINE PARAMETERS
-ersup = [1 0 0;     % Permitivitty tensor of Superstrate
-         0 1 0;
+ersup = [3 3.4641 0;     % Permitivitty tensor of Superstrate
+         3.4641 7 0;
          0 0 1];
-ersub = [9 0 0;
-         0 9 0;     % Permittivity tensor of Substrate
-         0 0 9];
-h = 2*millimeters; % Height of substrate
+ersub = [3 3.4641 0;
+         3.4641 7 0; % Permittivity tensor of Substrate
+         0 0 1];
+h = 3*millimeters; % Height of substrate
 w = 4*millimeters; % Width of TL
 
 % MISC. PARAMETERS
-phi = 0;        % Angle of tensor rotation
+phi = -30*degrees;;        % Angle of tensor rotation
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% DEFINE GRID
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Rot = [cos(phi) -sin(phi) 0;
+       sin(phi) cos(phi) 0;
+       0  0  1];
+       
+ersup = Rot*ersup*Rot';
+ersub = Rot*ersub*Rot';
+
 
 % GRID PARAMETERS
 BUFF = 3*w;
 Sx = BUFF + w + BUFF;
 Sy = h + BUFF;
-Nx = 256;
-Ny = 256;
+Nx = 200;
+Ny = 150;
 
 % INITIAL GUESS AT GRID RESOLUTION
 dx = Sx/Nx;
@@ -126,3 +134,17 @@ DEV.ERxy = ER2xy(1:2:Nx2,2:2:Ny2);
 DEV.ERyx = ER2yx(2:2:Nx2,1:2:Ny2);
 DEV.ERyy = ER2yy(1:2:Nx2,2:2:Ny2); 
 
+TL = anisotropicTL([dx dy],DEV,SIG);
+
+% Calculate total field
+E = sqrt(abs(TL.Ex).^2 + abs(TL.Ey).^2);
+
+imagesc(xa,ya,TL.V');
+colormap(jet);
+colorbar;
+
+figure('Color','w');
+imagesc(xa,ya,E');
+colorbar
+caxis([0 0.2]);
+colormap(jet);
