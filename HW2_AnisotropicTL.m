@@ -112,11 +112,11 @@ SIG.GND(:,1)     = 1;
 SIG.GND(:,Ny)    = 1;
 SIG.GND(1,:)     = 1;
 SIG.GND(Nx,:)    = 1;
-nx1 = (BUFF/dx);
-nx2 = nx1 + w/dx;
-ny1 = Ny  - 2 - (h/dy);
-ny2 = ny1 + 1;
-SIG.SIG1(nx1:nx2,ny1:ny2) = 1;
+nx1 = 1 + floor((Nx-nx)/2);
+nx2 = nx1 + nx - 1;
+ny  = Ny  - 1 - (h/dy);
+SIG.SIG1(nx1:nx2,ny) = 1;
+
 
 % BUILD PERMITTIVITIES IN 2x GRID
 ER2xx = ersup(1,1)*ones(Nx2,Ny2);   % Fill with superstrate
