@@ -32,8 +32,8 @@ function TL = anisotropicTL(RES,DEV,SIG)
 %   .nEff     Effective refractive index of transmission line
 
 % Units and constants
-m   = 1;
-mm  = 1e-3 * m;
+mm  = 1;
+m   = 1e3 * mm;
 e0  = 8.8541878176e-12 * 1/m;
 c0  = 299792458 * m;
 
