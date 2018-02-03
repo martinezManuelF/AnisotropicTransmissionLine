@@ -1,11 +1,10 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% FILENAME:         HW2_AnisotropicTL.m
+% FILENAME:         AnisoMicroStrip.m
 % COURSE:           EE5322--21st Century Electromagnetics
 % INSTRUCTOR:       Raymond C. Rumpf
 % NAME:             Manuel F. Martinez
 % SEMESTER:         Spring 2018
-% DUE DATE:         01/30/2018
-% LAST MODIFIED:    01/29/2018
+% DUE DATE:         02/06/2018
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
