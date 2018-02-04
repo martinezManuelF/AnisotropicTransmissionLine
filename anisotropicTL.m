@@ -117,6 +117,6 @@ TL.Ex = reshape(TL.Ex,Nx,Ny);
 TL.Ey = reshape(TL.Ey,Nx,Ny);
  
 % Calculate effective refractive index
-TL.nEff = c0*sqrt(TL.L/TL.C);
+TL.nEff = c0*sqrt(TL.L*TL.C);
  
 end

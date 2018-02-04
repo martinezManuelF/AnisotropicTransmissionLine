@@ -14,7 +14,7 @@
 % RESTORE MATLAB STATE
 clear all;
 close all;
-clear;
+clc;
 
 % UNITS
 millimeters = 1;

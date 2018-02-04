@@ -120,11 +120,11 @@ SIG.SIG1(nx1:nx2,ny) = 1;
 
 
 % BUILD PERMITTIVITIES IN 2x GRID
-ER2xx = ersup(1,1)*ones(Nx2,Ny2);   % Fill with superstrate
+ER2xx = ersup(1,1)*ones(Nx2,Ny2);       % Fill with superstrate
 ER2xy = ersup(1,2)*ones(Nx2,Ny2);
 ER2yx = ersup(2,1)*ones(Nx2,Ny2);
 ER2yy = ersup(2,2)*ones(Nx2,Ny2);
-ER2xx(:,Ny2-h/dy2-1:Ny2) = ersub(1,1);
+ER2xx(:,Ny2-h/dy2-1:Ny2) = ersub(1,1);  % Fill with substrate
 ER2xy(:,Ny2-h/dy2-1:Ny2) = ersub(1,2);
 ER2yx(:,Ny2-h/dy2-1:Ny2) = ersub(2,1);
 ER2yy(:,Ny2-h/dy2-1:Ny2) = ersub(2,2);
