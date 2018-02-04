@@ -28,10 +28,12 @@ kilohertz   = 1e3 * hertz;
 megahertz   = 1e6 * hertz;
 gigahertz   = 1e9 * hertz;
 degrees     = pi/180;
+F           = 1;
+H           = 1;
 
 % CONSTANTS
-e0 = 8.85418782e-12;
-u0 = 1.25663706e-6;
+e0 = 8.85418782e-12 * F/meters;
+u0 = 1.25663706e-6 * H/meters;
 N0 = sqrt(u0/e0);
 c0 = 299792458 * meters/seconds;
 
@@ -62,8 +64,8 @@ Rot = [cos(phi) -sin(phi) 0;
        sin(phi) cos(phi) 0;
        0  0  1];
        
-ersup = Rot*ersup*Rot';
-ersub = Rot*ersub*Rot';
+ersup = Rot*ersup*inv(Rot);
+ersub = Rot*ersub*inv(Rot);
 
 
 % GRID PARAMETERS
