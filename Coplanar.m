@@ -13,16 +13,8 @@ close all;
 clear;
 
 % UNITS
-millimeters = 1;
-meters      = 1e3*millimeters;
-centimeters = 1e2*millimeters;
-inches      = 2.54 * centimeters;
-feet        = 12 * inches;
+meters      = 1;
 seconds     = 1;
-hertz       = 1/seconds;
-kilohertz   = 1e3 * hertz;
-megahertz   = 1e6 * hertz;
-gigahertz   = 1e9 * hertz;
 degrees     = pi/180;
 F           = 1;
 H           = 1;
@@ -40,3 +32,50 @@ figure('Color','w');
 %% DASHBOARD
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+% TRANSMISSION LINE PARAMETERS
+w = 2.5;                % Width of trace
+s = 0.1;                % Spacing between traces
+ersup = 1.0 * eye(3,3); % Superstrate Tensor
+ersub = 2.5 * eye(3,3); % Substrate Tensor
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% DEFINE GRID
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% GRID PARAMETERS
+BUFF  = 3*w;
+Sx    = BUFF + s + w + BUFF;
+Sy    = 2*BUFF + 1;
+Nx    = 512;
+Ny    = 512;
+
+% FIRST GUESS AT RESOLUTION
+dx = Sx/Nx;
+dy = Sy/Ny;
+
+% SNAP GRID TO CRITICAL DIMENSIONS
+nx = ceil(s/dx);
+dx = s/nx;
+
+% COMPUTE 2x GRID
+Nx2 = 2*Nx;
+dx2 = dx/2;
+Ny2 = 2*Ny;
+dy2 = dy/2;
+
+% GRID AXES
+xa = [0:Nx-1]*dx; xa = xa - mean(xa);
+ya = [0:Ny-1]*dy; ya = ya - mean(ya);
+
+% 2x GRID AXES
+xa2 = [0:Nx2-1]*dx2; xa2 = xa2 - mean(xa2);
+ya2 = [0:Ny2-1]*dy2; ya2 = ya2 - mean(ya2);
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% BUILD DEVICE ON GRID
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% INITIALIZE SIGNALS
+SIG.V     = [0 1];
+SIG.GND   = zeros(Nx,Ny);
+SIG.SIG1  = SIG.GND;

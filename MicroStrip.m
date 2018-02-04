@@ -13,16 +13,8 @@ close all;
 clc;
 
 % UNITS
-millimeters = 1;
-meters      = 1e3*millimeters;
-centimeters = 1e2*millimeters;
-inches      = 2.54 * centimeters;
-feet        = 12 * inches;
+meters      = 1;
 seconds     = 1;
-hertz       = 1/seconds;
-kilohertz   = 1e3 * hertz;
-megahertz   = 1e6 * hertz;
-gigahertz   = 1e9 * hertz;
 degrees     = pi/180;
 F           = 1;
 H           = 1;
@@ -41,8 +33,8 @@ figure('Color','w');
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % TRANSMISSION LINE PARAMETERS
-w       = 4 * millimeters;  % Width of trace
-h       = 2 * millimeters;  % Height of dielectric
+w       = 4;                % Width of trace
+h       = 2;                % Height of dielectric
 ersub   = 4.4 * eye(3,3);   % Dielectric substrate tensor
 ersup   = 1.0 * eye(3,3);   % Dielectric superstrate tensor
 
@@ -135,8 +127,8 @@ E = sqrt(abs(TL.Ex).^2 + abs(TL.Ey).^2);
 sp = 18;
 
 % SHOW NUMERICAL PARAMETERS ON CONSOLE
-disp(['C    = ' num2str(TL.C/1e-15,'%3.5f') ' fF/m']);
-disp(['L    = ' num2str(TL.L/1e-12,'%3.5f') ' pH/m']);
+disp(['C    = ' num2str(TL.C/1e-12,'%3.5f') ' pF/m']);
+disp(['L    = ' num2str(TL.L/1e-09,'%3.5f') ' nH/m']);
 disp(['Z0   = ' num2str(TL.Z0) ' Ohms']);
 disp(['nEff = ' num2str(TL.nEff)]);
 

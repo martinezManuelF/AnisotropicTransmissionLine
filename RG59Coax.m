@@ -17,16 +17,8 @@ close all;
 clc;
 
 % UNITS
-millimeters = 1;
-meters      = 1e3*millimeters;
-centimeters = 1e2*millimeters;
-inches      = 2.54 * centimeters;
-feet        = 12 * inches;
+meters      = 1;
 seconds     = 1;
-hertz       = 1/seconds;
-kilohertz   = 1e3 * hertz;
-megahertz   = 1e6 * hertz;
-gigahertz   = 1e9 * hertz;
 degrees     = pi/180;
 F           = 1;
 H           = 1;
@@ -45,8 +37,140 @@ figure('Color','w');
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % TRANSMISSION LINE PARAMETERS
-er = 2.3*eye(3,3);
-r1 = 0.35*millimeters;
-r2 = 2.5*millimeters;
-r3 = 2.7*millimeters;
+erin  = 2.3 * eye(3,3);     % Permittivity tensor of inside of Coax cable
+erout = 1.0 * eye(3,3);     % Permittivity tensot of outside of Coax cable
+r1    = 0.35;               % Radius of inner conductor
+r2    = 2.5;                % Radius of dielectric core
+r3    = 2.7;                % Thickness of cladding
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% DEFINE GRID
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% SPACER REGIONS
+BUFF  = 3*r3;
+Sx    = BUFF;
+Sy    = BUFF;
+
+% GRID SIZE
+Nx = 512;
+Ny = 512;
+
+% INITIAL GUESS AT RESOLUTION
+dx = Sx/Nx;
+dy = Sy/Ny;
+
+% SNAP GRID TO CRITICAL DIMENSIONS
+nx = ceil(r1/dx);
+dx = r1/nx;
+ny = ceil(r1/dy);
+dy = r1/ny;
+
+% COMPUTE 2X GRID
+Nx2 = 2*Nx;
+dx2 = dx/2;
+Ny2 = 2*Ny;
+dy2 = dy/2;
+
+% GRID AXES
+xa = [0:Nx-1]*dx; xa = xa - mean(xa);
+ya = [0:Ny-1]*dy; ya = ya - mean(ya);
+
+% 2x GRID AXES
+xa2 = [0:Nx2-1]*dx2; xa2 = xa2 - mean(xa2);
+ya2 = [0:Ny2-1]*dy2; ya2 = ya2 - mean(ya2);
+
+% CREATE MESH
+[Y,X] = meshgrid(ya,xa);
+RSQ = (X.^2 + Y.^2);
+
+% CREATE 2X MESH
+[Y2,X2] = meshgrid(ya2,xa2);
+RSQ2 = (X2.^2 + Y2.^2);
+CIN = RSQ2 < ((r3 + r2)/2)^2;
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% BUILD DEVICE ON GRID
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% INITIALIZE SIGNALS
+SIG.V = [0 1 0];
+SIG.GND = zeros(Nx,Ny);
+SIG.SIG1 = SIG.GND;
+SIG.SIG2 = SIG.GND;
+
+% FORCE CONDUCTORS
+SIG.GND(:,[1 Ny]) = 1;
+SIG.GND([1 Nx],:) = 1;
+SIG.SIG1 = RSQ <= r1^2;
+SIG.SIG2 = RSQ >= r2^2 & RSQ < r3^2;
+
+% BUILD PERMITTIVITIES ON 2X GRID
+% Outside dielectrics
+ER2xx = erout(1,1) * (1 - CIN);
+ER2xy = erout(1,2) * (1 - CIN);
+ER2yx = erout(2,1) * (1 - CIN);
+ER2yy = erout(2,2) * (1 - CIN);
+% Inside dielectrics
+ER2xx = ER2xx + erin(1,1) * CIN;
+ER2xy = ER2xy + erin(1,2) * CIN;
+ER2yx = ER2yx + erin(2,1) * CIN;
+ER2yy = ER2yy + erin(2,2) * CIN;
+
+% PARSE TO 1x GRID
+DEV.ERxx = ER2xx(2:2:Nx2,1:2:Ny2);
+DEV.ERxy = ER2xy(1:2:Nx2,2:2:Ny2);
+DEV.ERyx = ER2yx(2:2:Nx2,1:2:Ny2);
+DEV.ERyy = ER2yy(1:2:Nx2,2:2:Ny2); 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% SIMULATE DEVICE
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% CALL anisotropicTL.m
+RES = [dx dy];
+TL = anisotropicTL(RES,DEV,SIG);
+
+% CALCULATE TOTAL FIELD
+E = sqrt(abs(TL.Ex).^2 + abs(TL.Ey).^2);
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% POST-PROCESS DATA
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% SET SPACING FOR QUIVER
+sp = 18;
+
+% SHOW NUMERICAL PARAMETERS ON CONSOLE
+disp(['C    = ' num2str(TL.C/1e-12,'%3.5f') ' pF/m']);
+disp(['L    = ' num2str(TL.L/1e-09,'%3.5f') ' nH/m']);
+disp(['Z0   = ' num2str(TL.Z0) ' Ohms']);
+disp(['nEff = ' num2str(TL.nEff)]);
+
+% VISUALIZE POTENTIAL AND FIELDS
+imagesc(xa,ya,TL.V');
+colormap(cubehelix);
+set(gca,'FontSize',12,'FontWeight','bold');
+colorbar;
+axis equal tight;
+title('Electric Potential V','FontSize',14);
+xlabel('x (mm)','FontSize',12);
+ylabel('y (mm)','FontSize',12);
+
+figure('Color','w');
+imagesc(xa,ya,E');
+caxis([0 0.75]);
+set(gca,'FontSize',12,'FontWeight','bold');
+colorbar
+colormap(cubehelix);
+axis equal tight;
+title('|E|','FontSize',14);
+xlabel('x (mm)','FontSize',12);
+ylabel('y (mm)','FontSize',12);
+hold on;
+
+% ADD QUIVER
+[Y,X] = meshgrid(ya,xa);
+quiver(X(1:sp:Nx,1:sp:Ny),Y(1:sp:Nx,1:sp:Ny),TL.Ex(1:sp:Nx,1:sp:Ny),...
+      TL.Ey(1:sp:Nx,1:sp:Ny),'Color','w');
+hold off;
