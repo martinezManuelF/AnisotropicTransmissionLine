@@ -18,4 +18,7 @@ Simulation files included:
 * ParallelPlate.m:    Builds and simulates a parallel plate transmission line.
 * RG59Coax.m:         Builds and simulates an RG-59 Coaxial transmission line.
 
+Sample simulations:
+![RG-59 Coaxial Cable](https://github.com/TasartirAmras/AnisotropicTransmissionLine/blob/master/Graphics/CoaxE.png)
+
 Created as a part of EE 5322--21st Century Electromagnetics at the University of Texas at El Paso.
