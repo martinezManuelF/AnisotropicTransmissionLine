@@ -23,6 +23,6 @@ Device        | Electric Potential | Fields
 ------------- | ------------- | ------------|
 RG-59 Coax    | ![Potential](https://github.com/TasartirAmras/AnisotropicTransmissionLine/blob/master/Graphics/CoaxV.png)  | ![Fields](https://github.com/TasartirAmras/AnisotropicTransmissionLine/blob/master/Graphics/CoaxE.png)            |
 Micro Strip   | ![Potential](https://github.com/TasartirAmras/AnisotropicTransmissionLine/blob/master/Graphics/MicroStripV.png)  |  ![Fields](https://github.com/TasartirAmras/AnisotropicTransmissionLine/blob/master/Graphics/MicroStripE.png)           |
-Parallel Plate | ![Potential](![Potential](https://github.com/TasartirAmras/AnisotropicTransmissionLine/blob/master/Graphics/ParallelPlateV.png) | ![Fields](![Potential](https://github.com/TasartirAmras/AnisotropicTransmissionLine/blob/master/Graphics/ParallelPlateE.png)
+Parallel Plate | ![Potential](https://github.com/TasartirAmras/AnisotropicTransmissionLine/blob/master/Graphics/ParallelPlateV.png) | ![Fields](https://github.com/TasartirAmras/AnisotropicTransmissionLine/blob/master/Graphics/ParallelPlateE.png)
 
 Created as a part of EE 5322--21st Century Electromagnetics at the University of Texas at El Paso.
