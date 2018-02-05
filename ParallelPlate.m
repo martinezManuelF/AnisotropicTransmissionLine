@@ -126,7 +126,7 @@ E = sqrt(abs(TL.Ex).^2 + abs(TL.Ey).^2);
 
 % SHOW NUMERICAL PARAMETERS ON CONSOLE
 disp(['C    = ' num2str(TL.C/1e-12,'%3.5f') ' pF/m']);
-disp(['L    = ' num2str(TL.L/1e-09,'%3.5f') ' pH/m']);
+disp(['L    = ' num2str(TL.L/1e-09,'%3.5f') ' nH/m']);
 disp(['Z0   = ' num2str(TL.Z0) ' Ohms']);
 disp(['nEff = ' num2str(TL.nEff)]);
 
