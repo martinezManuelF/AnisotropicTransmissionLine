@@ -79,3 +79,19 @@ ya2 = [0:Ny2-1]*dy2; ya2 = ya2 - mean(ya2);
 SIG.V     = [0 1];
 SIG.GND   = zeros(Nx,Ny);
 SIG.SIG1  = SIG.GND;
+
+% FORCE CONDUCTORS
+SIG.GND(:,[1 Ny]) = 1;
+SIG.GND([1 Nx],:) = 1;
+nx1 = round((w + 2*s)/dx);
+nx2 = 1 + floor((Nx-nx1)/2);
+nx3 = nx2 + nx1 - 1;
+ny = 1 + floor(Ny/2);
+SIG.GND(1:nx2,ny) = 1;
+SIG.GND(nx3:Nx,ny) = 1;
+nx4 = w/dx;
+nx5 = 1 + floor((Nx-nx4)/2);
+nx6 = nx5 + nx4 - 1;
+SIG.SIG1(nx5:nx6,ny) = 1;
+
+
