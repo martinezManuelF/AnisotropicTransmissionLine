@@ -110,7 +110,7 @@ ER2yy = ER2xx;
 for ny = 1 : Ny2
   
   % CALCULATE FUNCTION TO LINEARLY ROTATE TENSOR
-  y = (ny)*dx2;
+  y = (ny - 1)*dx2;
   
   % CALCULATE ANGLE OF ROTATION
   PHI = (y/h)*(10*degrees);
