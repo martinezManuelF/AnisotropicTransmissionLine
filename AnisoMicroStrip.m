@@ -113,7 +113,7 @@ for ny = 1 : Ny2
   y = (ny - 1)*dx2;
   
   % CALCULATE ANGLE OF ROTATION
-  PHI = (y/h)*(10*degrees);
+  PHI = -(y/h)*(10*degrees);
   
   % ROTATION MATRIX
   R = RotMat(PHI,'z');
