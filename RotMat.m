@@ -1,4 +1,4 @@
-function R = RotMax(PHI,AXIS)
+function R = RotMat(PHI,AXIS)
 % RotMax(THETA,AXIS) : Tensor rotation matrices
 %
 % INPUT ARGUMENTS

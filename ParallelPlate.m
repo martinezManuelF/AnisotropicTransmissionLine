@@ -132,7 +132,7 @@ disp(['nEff = ' num2str(TL.nEff)]);
 
 % VISUALIZE POTENTIAL AND FIELDS
 imagesc(xa,ya,TL.V');
-colormap(cubehelix);
+colormap(hot);
 colorbar;
 axis equal tight;
 set(gca,'FontSize',12,'FontWeight','bold');
@@ -144,7 +144,7 @@ figure('Color','w');
 imagesc(xa,ya,E');
 caxis([0 1]);
 colorbar
-colormap(cubehelix);
+colormap(hot);
 axis equal tight;
 set(gca,'FontSize',12,'FontWeight','bold');
 title('|E|','FontSize',14);
@@ -157,3 +157,67 @@ hold on;
 quiver(X(1:16:Nx,1:16:Ny),Y(1:16:Nx,1:16:Ny),TL.Ex(1:16:Nx,1:16:Ny),...
       TL.Ey(1:16:Nx,1:16:Ny),'Color','w');
 hold off;
+
+% VISUALIZE DIELECTRIC TENSORS
+figure('Color','w');
+a = subplot(2,2,1);
+set(a,'FontSize',12);
+imagesc(xa2,ya2,ER2xx');
+title('$\varepsilon_{xx}$','FontSize',14,'Interpreter','LaTex');
+xlabel('x (mm)','FontSize',12);
+ylabel('y (mm)','FontSize',12);
+caxis([1.5 +1.5*max(ER2xx(:))]);
+colorbar;
+colormap(hot);
+
+a = subplot(2,2,2);
+set(a,'FontSize',12);
+imagesc(xa2,ya2,ER2xy');
+title('$\varepsilon_{xy}$','FontSize',14,'Interpreter','LaTex');
+xlabel('x (mm)','FontSize',12);
+ylabel('y (mm)','FontSize',12);
+caxis([-2*max(ER2xy(:)) +2*max(ER2xy(:))]);
+colorbar;
+colormap(hot);
+
+a = subplot(2,2,3);
+set(a,'FontSize',12);
+imagesc(xa2,ya2,ER2yx');
+title('$\varepsilon_{yx}$','FontSize',14,'Interpreter','LaTex');
+xlabel('x (mm)','FontSize',12);
+ylabel('y (mm)','FontSize',12);
+caxis([-2*max(ER2yx(:)) +2*max(ER2yx(:))]);
+colorbar;
+colormap(hot);
+
+a = subplot(2,2,4);
+set(a,'FontSize',12);
+imagesc(xa2,ya2,ER2yy');
+title('$\varepsilon_{yy}$','FontSize',14,'Interpreter','LaTex');
+xlabel('x (mm)','FontSize',12);
+ylabel('y (mm)','FontSize',12);
+caxis([1.5 +1.5*max(ER2yy(:))]);
+colorbar;
+colormap(hot);
+
+% PLOT CONDUCTORS
+figure('Color','w');
+subplot(1,2,1);
+imagesc(xa,ya,SIG.GND');
+title('GND','FontSize',14);
+xlabel('x (mm)','FontSize',12);
+ylabel('y (mm)','FontSize',12);
+axis square;
+colormap(gray);
+colorbar;
+caxis([0 1]);
+
+subplot(1,2,2);
+imagesc(xa,ya,SIG.SIG1' | SIG.SIG2');
+title('SIG1 | SIG2','FontSize',14);
+xlabel('x (mm)','FontSize',12);
+ylabel('y (mm)','FontSize',12);
+axis square;
+colormap(gray);
+colorbar;
+caxis([0 1]);

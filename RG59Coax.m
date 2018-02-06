@@ -107,15 +107,16 @@ SIG.SIG2 = RSQ >= r2^2 & RSQ < r3^2;
 
 % BUILD PERMITTIVITIES ON 2X GRID
 % Outside dielectrics
+A = RSQ2 <= r1^2;
 ER2xx = erout(1,1) * (1 - CIN);
 ER2xy = erout(1,2) * (1 - CIN);
 ER2yx = erout(2,1) * (1 - CIN);
 ER2yy = erout(2,2) * (1 - CIN);
 % Inside dielectrics
-ER2xx = ER2xx + erin(1,1) * CIN;
-ER2xy = ER2xy + erin(1,2) * CIN;
-ER2yx = ER2yx + erin(2,1) * CIN;
-ER2yy = ER2yy + erin(2,2) * CIN;
+ER2xx = ER2xx + erin(1,1) * CIN - 1.3*erout(1,1) * A;
+ER2xy = ER2xy + erin(1,2) * CIN - 1.3*erout(1,2) * A;
+ER2yx = ER2yx + erin(2,1) * CIN - 1.3*erout(2,1) * A;
+ER2yy = ER2yy + erin(2,2) * CIN - 1.3*erout(2,2) * A;
 
 % PARSE TO 1x GRID
 DEV.ERxx = ER2xx(2:2:Nx2,1:2:Ny2);
@@ -149,7 +150,7 @@ disp(['nEff = ' num2str(TL.nEff)]);
 
 % VISUALIZE POTENTIAL AND FIELDS
 imagesc(xa,ya,TL.V');
-colormap(cubehelix);
+colormap(hot);
 set(gca,'FontSize',12,'FontWeight','bold');
 colorbar;
 axis equal tight;
@@ -162,7 +163,7 @@ imagesc(xa,ya,E');
 caxis([0 0.75]);
 set(gca,'FontSize',12,'FontWeight','bold');
 colorbar
-colormap(cubehelix);
+colormap(hot);
 axis equal tight;
 title('|E|','FontSize',14);
 xlabel('x (mm)','FontSize',12);
@@ -174,3 +175,65 @@ hold on;
 quiver(X(1:sp:Nx,1:sp:Ny),Y(1:sp:Nx,1:sp:Ny),TL.Ex(1:sp:Nx,1:sp:Ny),...
       TL.Ey(1:sp:Nx,1:sp:Ny),'Color','w');
 hold off;
+
+% VISUALIZE DIELECTRIC TENSORS
+figure('Color','w');
+a = subplot(2,2,1);
+set(a,'FontSize',12);
+imagesc(xa2,ya2,ER2xx');
+title('$\varepsilon_{xx}$','FontSize',14,'Interpreter','LaTex');
+xlabel('x (mm)','FontSize',12);
+ylabel('y (mm)','FontSize',12);
+%caxis([1.5 +1.5*max(ER2xx(:))]);
+colorbar;
+colormap(hot);
+
+a = subplot(2,2,2);
+set(a,'FontSize',12);
+imagesc(xa2,ya2,ER2xy');
+title('$\varepsilon_{xy}$','FontSize',14,'Interpreter','LaTex');
+xlabel('x (mm)','FontSize',12);
+ylabel('y (mm)','FontSize',12);
+%caxis([-2*max(ER2xy(:)) +2*max(ER2xy(:))]);
+colorbar;
+colormap(hot);
+
+a = subplot(2,2,3);
+set(a,'FontSize',12);
+imagesc(xa2,ya2,ER2yx');
+title('$\varepsilon_{yx}$','FontSize',14,'Interpreter','LaTex');
+xlabel('x (mm)','FontSize',12);
+ylabel('y (mm)','FontSize',12);
+%caxis([-2*max(ER2yx(:)) +2*max(ER2yx(:))]);
+colorbar;
+colormap(hot);
+
+a = subplot(2,2,4);
+set(a,'FontSize',12);
+imagesc(xa2,ya2,ER2yy');
+title('$\varepsilon_{yy}$','FontSize',14,'Interpreter','LaTex');
+xlabel('x (mm)','FontSize',12);
+ylabel('y (mm)','FontSize',12);
+%caxis([1.5 +1.5*max(ER2yy(:))]);
+colorbar;
+colormap(hot);
+
+% PLOT CONDUCTORS
+figure('Color','w');
+imagesc(xa,ya,SIG.GND');
+title('GND','FontSize',14);
+xlabel('x (mm)','FontSize',12);
+ylabel('y (mm)','FontSize',12);
+colormap(gray);
+colorbar;
+caxis([0 1]);
+
+figure('Color','w');
+imagesc(xa,ya,SIG.SIG1' | SIG.SIG2');
+axis equal tight;
+title('SIG1 | SIG2','FontSize',14);
+xlabel('x (mm)','FontSize',12);
+ylabel('y (mm)','FontSize',12);
+colormap(gray);
+colorbar;
+caxis([0 1]);
