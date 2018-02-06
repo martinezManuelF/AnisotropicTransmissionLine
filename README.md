@@ -21,6 +21,7 @@ Makes use of Yee Staggered grid schemes to compute derivatives using the finite 
 ## Sample simulations: ##
 Device        | Electric Potential | Fields
 ------------- | ------------- | ------------|
+Anisotropic Micro Strip | ![Potential](https://github.com/TasartirAmras/AnisotropicTransmissionLine/blob/master/Graphics/AnisoMicroStripV.png) | ![Fields](https://github.com/TasartirAmras/AnisotropicTransmissionLine/blob/master/Graphics/AnisoMicroStripE.png) |
 RG-59 Coax    | ![Potential](https://github.com/TasartirAmras/AnisotropicTransmissionLine/blob/master/Graphics/CoaxV.png)  | ![Fields](https://github.com/TasartirAmras/AnisotropicTransmissionLine/blob/master/Graphics/CoaxE.png)            |
 Micro Strip   | ![Potential](https://github.com/TasartirAmras/AnisotropicTransmissionLine/blob/master/Graphics/MicroStripV.png)  |  ![Fields](https://github.com/TasartirAmras/AnisotropicTransmissionLine/blob/master/Graphics/MicroStripE.png)           |
 Parallel Plate | ![Potential](https://github.com/TasartirAmras/AnisotropicTransmissionLine/blob/master/Graphics/ParallelPlateV.png) | ![Fields](https://github.com/TasartirAmras/AnisotropicTransmissionLine/blob/master/Graphics/ParallelPlateE.png)
